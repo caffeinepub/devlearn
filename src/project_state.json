@@ -1,0 +1,577 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 52,
+  "summary": "DevLearn is an Internet Computer (ICP) web app for an interactive video-based learning platform. It provides a course catalog with lessons/quizzes/coding challenges, video lesson playback with engagement monitoring via webcam, user dashboards for progress and analytics, certificate viewing with performance-based badge styling, and an admin dashboard for platform analytics, content management, pricing, Stripe payment configuration, and (placeholder) external certification/alumni registry management. The backend is a Motoko canister providing access control (admin/user/guest), system health reporting, default course seeding on upgrade, Stripe checkout session creation/status via HTTP outcalls, and blob-storage related maintenance endpoints.",
+  "existing_features": [
+    {
+      "id": "IF-1",
+      "title": "Hash-based client-side routing",
+      "synonyms": [
+        "URL hash router",
+        "AppState navigation"
+      ],
+      "description": "Implements navigation across views (home, course, lesson, dashboard, certificates, admin) using window.location.hash parsing and synchronization to support simple routing without React Router.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-2",
+      "title": "Internet Identity authentication provider",
+      "synonyms": [
+        "II login",
+        "AuthClient integration"
+      ],
+      "description": "Provides a React context for Internet Identity login/logout, identity persistence, status flags (initializing/logging-in/etc.), and identity retrieval for authenticated actor calls.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-3",
+      "title": "Identity-aware ICP actor creation and query invalidation",
+      "synonyms": [
+        "useActor",
+        "actor recreation on identity change"
+      ],
+      "description": "Creates an anonymous or authenticated backend actor based on the current identity, initializes access control via _initializeAccessControlWithSecret, and invalidates/refetches dependent React Query caches when the actor changes.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-4",
+      "title": "System health polling and initialization UX",
+      "synonyms": [
+        "System initialization screen",
+        "useSystemInitialization"
+      ],
+      "description": "Polls backend getSystemHealth() until systemReady, showing a detailed loading screen with status indicators and retry handling when the user is authenticated.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-5",
+      "title": "User profile setup modal",
+      "synonyms": [
+        "ProfileSetupModal",
+        "first-run profile creation UI"
+      ],
+      "description": "Prompts authenticated users without a profile to enter their name and submits a fully populated UserProfile object shape (including engagement metrics and purchasedCourses) via a save mutation (currently placeholder).",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-6",
+      "title": "Course catalog landing page UI",
+      "synonyms": [
+        "HomePage",
+        "course listing"
+      ],
+      "description": "Displays hero marketing content, feature highlights, and an available courses grid with counts (lessons/quizzes/challenges) and price badges; includes robust skeleton/loading and error/empty states.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-7",
+      "title": "Course detail page with paywall UI and lesson navigation",
+      "synonyms": [
+        "CoursePage",
+        "course content tabs"
+      ],
+      "description": "Shows a course overview with pricing badge, purchase prompt for paid courses, tabbed content (lessons/quizzes/challenges), and per-lesson actions to start/review lessons with a startCourse mutation prior to navigation.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-8",
+      "title": "Stripe payment initiation dialog (frontend)",
+      "synonyms": [
+        "PaymentDialog",
+        "checkout redirect"
+      ],
+      "description": "Builds shopping line items from a course, calls createCheckoutSession, and redirects the user to the returned Stripe Checkout URL with processing state and error toasts.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-9",
+      "title": "Video lesson player with progress tracking and completion trigger",
+      "synonyms": [
+        "LessonPage",
+        "lesson playback"
+      ],
+      "description": "Plays lesson video via lesson.videoBlob.url, displays an on-page progress bar based on video time updates, and triggers completion at >=90% watched with a manual 'Mark as Complete' option and completion icon.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-10",
+      "title": "Webcam-based engagement monitoring UI (simulated metrics)",
+      "synonyms": [
+        "EngagementMonitor",
+        "performance monitoring"
+      ],
+      "description": "Uses getUserMedia via a reusable useCamera hook to show a live webcam preview and periodically updates simulated engagement metrics (attention, participation, facial, audio) with progress bars and overall score.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-11",
+      "title": "User analytics dashboard components",
+      "synonyms": [
+        "AnalyticsDashboard",
+        "progress analytics"
+      ],
+      "description": "Renders engagement score, quiz/coding averages derived from EngagementMetrics, certificate aggregate analytics (when provided), and course progress bars for enrolled courses.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-12",
+      "title": "User dashboard with authentication gates and external registration status panel",
+      "synonyms": [
+        "UserDashboard",
+        "ExternalRegistrationStatus"
+      ],
+      "description": "Provides authenticated access to a dashboard with skeleton/error states, certificate performance summary, external certification registration status list UI, and embedded analytics dashboard.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-13",
+      "title": "Certificate gallery and certificate preview with performance badges",
+      "synonyms": [
+        "CertificatesPage",
+        "CertificatePreview"
+      ],
+      "description": "Shows earned certificates in a grid with engagement/quiz/coding summaries, supports previewing a styled certificate template with computed overall score, percentile/tier badges, and embedded per-assessment results.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-14",
+      "title": "Admin dashboard with analytics, user/certificate management, and content/pricing tools (UI + placeholder mutations)",
+      "synonyms": [
+        "AdminDashboard",
+        "AdminAnalytics"
+      ],
+      "description": "Admin UI with tabs for platform analytics (aggregate stats + top performers), user list, certificate list with preview, course creation and lesson upload (client-side blob URL), pricing updates, Stripe config access, external certification config, and alumni registry viewing.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-15",
+      "title": "Stripe configuration management (admin)",
+      "synonyms": [
+        "StripeConfigDialog",
+        "isStripeConfigured"
+      ],
+      "description": "Allows admins to set Stripe secret key and allowed countries via setStripeConfiguration and displays a warning banner in AdminDashboard when Stripe is not configured.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-16",
+      "title": "External certification configuration UI (placeholder)",
+      "synonyms": [
+        "ExternalCertificationConfig",
+        "provider setup UI"
+      ],
+      "description": "Admin UI to add and list external certification provider configs (name/type/endpoint/api key/active). Persistence and backend retrieval are currently placeholders.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-17",
+      "title": "Alumni registry manager UI (placeholder)",
+      "synonyms": [
+        "AlumniRegistryManager",
+        "verified alumni viewer"
+      ],
+      "description": "Admin UI to view/filter alumni records by course/provider, inspect record details and external registrations, and present empty-state illustrations when no data exists (backend integration currently placeholder).",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-18",
+      "title": "Testing mode panel for mock validation",
+      "synonyms": [
+        "TestingModePanel",
+        "mock certificate generator"
+      ],
+      "description": "Provides a testing mode to generate mock engagement/quiz scores and mock certificates, with result tracking and certificate preview dialogs for UI validation.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-19",
+      "title": "Global error boundary with reload recovery",
+      "synonyms": [
+        "ErrorBoundary",
+        "crash guard"
+      ],
+      "description": "Catches React runtime errors and presents a friendly error card with the error message and a refresh button to reload the app.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-20",
+      "title": "Backend access control (admin/user/guest) with secret-based bootstrap",
+      "synonyms": [
+        "AccessControl",
+        "MixinAuthorization"
+      ],
+      "description": "Implements role registration and checks: first valid caller with matching CAFFEINE_ADMIN_TOKEN becomes admin; others become user; includes role queries, admin check, and admin-only role assignment.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-21",
+      "title": "Backend Stripe checkout + session status via HTTP outcalls",
+      "synonyms": [
+        "stripe.mo",
+        "createCheckoutSession",
+        "getStripeSessionStatus"
+      ],
+      "description": "Implements Stripe API calls from the canister using ICP http_request outcalls, including checkout session creation (POST) and session status retrieval (GET) with a transform function and basic principal extraction from client_reference_id.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-22",
+      "title": "Backend blob-storage maintenance endpoints and authorization",
+      "synonyms": [
+        "MixinStorage",
+        "Storage.mo"
+      ],
+      "description": "Implements gateway principal authorization updates, dead blob enumeration/pruning with GC trigger, liveness checks, and a cashier refill mechanism controlled by an environment-provided cashier principal.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-23",
+      "title": "Backend system health endpoint and default course seeding on upgrade",
+      "synonyms": [
+        "getSystemHealth",
+        "postupgrade initialization"
+      ],
+      "description": "Seeds a set of default courses during canister postupgrade when missing, tracks initialization flags, and exposes getSystemHealth() for frontend initialization monitoring.",
+      "reqIds": [],
+      "version": 1
+    },
+    {
+      "id": "IF-24",
+      "title": "Robust Stripe configuration saving with Motoko Result + stable persistence",
+      "synonyms": [
+        "setStripeConfiguration Result",
+        "persisted Stripe config",
+        "Stripe config bootstrap hardening"
+      ],
+      "description": "Backend Stripe configuration saving is updated to return a Motoko Result (#ok/#err) instead of trapping, with clear failure messages surfaced to the frontend. Stripe configuration is persisted in stable storage across upgrades (preupgrade/postupgrade), and authorization/initial-admin bootstrap behavior is hardened so configuration can be set reliably during initial setup while remaining admin-only thereafter. Frontend save flow unwraps the Result and displays backend-provided error messages in the Stripe configuration dialog.",
+      "reqIds": [
+        "REQ-16",
+        "REQ-17",
+        "REQ-18",
+        "REQ-19",
+        "REQ-20",
+        "REQ-21",
+        "REQ-22",
+        "REQ-23",
+        "REQ-24",
+        "REQ-25",
+        "REQ-26",
+        "REQ-27",
+        "REQ-28",
+        "REQ-29",
+        "REQ-30",
+        "REQ-31",
+        "REQ-32",
+        "REQ-33",
+        "REQ-34",
+        "REQ-35",
+        "REQ-36",
+        "REQ-37",
+        "REQ-38",
+        "REQ-39",
+        "REQ-40",
+        "REQ-41",
+        "REQ-42",
+        "REQ-43",
+        "REQ-44",
+        "REQ-45",
+        "REQ-46",
+        "REQ-47",
+        "REQ-48",
+        "REQ-49",
+        "REQ-50",
+        "REQ-51",
+        "REQ-52",
+        "REQ-53",
+        "REQ-54",
+        "REQ-55"
+      ],
+      "version": 1
+    },
+    {
+      "id": "IF-25",
+      "title": "Temporary payments/Stripe bypass mode (treat courses as free)",
+      "synonyms": [
+        "payments disabled mode",
+        "Stripe gating disabled",
+        "bypass paywall"
+      ],
+      "description": "Introduces a temporary payments bypass mode via a dedicated frontend payments config module, disabling Stripe-configuration gating and paid-course paywall behavior so the app remains usable while Stripe enablement is finalized. Admin UI warnings about missing Stripe configuration are suppressed/treated as optional while bypass is active, and backend operations avoid failing due to missing Stripe configuration for non-payment flows.",
+      "reqIds": [
+        "REQ-56",
+        "REQ-57",
+        "REQ-58",
+        "REQ-59",
+        "REQ-60"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-the-hardcoded-global-payments-bypass-that-forces-the-ui-to-always-show-payments-are-temporarily-disabled-and-instead-drive-the-payments-enabled-disabled-state-from-runtime-conditions-stripe-configuration-status-so-payments-are-only-disabled-when-stripe-is-not-configured-or-when-an-explicit-bypass-flag-is-enabled",
+      "title": "Remove the hardcoded global payments bypass that forces the UI to always show “Payments are temporarily disabled”, and instead drive the payments-enabled/disabled state from runtime conditions (Stripe configuration status) so payments are only disabled when Stripe is not configured (or when an explicit bypass flag is enabled).",
+      "reqIds": [
+        "REQ-61"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-payment-gating-logic-in-the-frontend-paymentdialog-and-checkout-session-creation-to-use-the-runtime-payments-disabled-state-based-on-stripe-configuration-status-and-any-explicit-bypass-rather-than-importing-and-checking-payments-disabled-directly",
+      "title": "Update the payment gating logic in the frontend (PaymentDialog and checkout session creation) to use the runtime payments-disabled state (based on Stripe configuration status and any explicit bypass) rather than importing and checking `PAYMENTS_DISABLED` directly.",
+      "reqIds": [
+        "REQ-62"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "On course completion, support both (1) external accreditation/certification-body registration via secure API and (2) internal verified-entity registry registration visible to admins",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Automatically create/initialize a default UserProfile on first login so dashboard/analytics do not spin/appear blank for new users",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Implement a backend method to fetch the authenticated caller's UserProfile that automatically creates and persists a default profile on first access (first-login), so the dashboard never receives an empty/null profile for a newly authenticated user.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Implement a backend method to save/update the authenticated caller's UserProfile (e.g., to support the existing Profile Setup flow), ensuring the stored profile id matches the authenticated caller principal and cannot be overwritten for a different principal.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Wire the frontend profile query (useGetCallerUserProfile) to call the new backend get-caller-profile method instead of returning null, and ensure UserDashboard exits the loading/skeleton state once the profile is returned.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Wire the frontend profile mutation (useSaveCallerUserProfile) to call the new backend save-caller-profile method instead of the current placeholder toast, and invalidate/refetch the current profile on success.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Align the frontend Result decoding contract with the backend Result variant shape (backend uses Motoko variants #ok/#err) for the newly wired profile endpoints, so profile fetch/save reliably handles success and error cases.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Add course pricing to course data and UI, and complete Stripe purchase flow so paid courses can be purchased/unlocked (prices visible on catalog/course pages and gating uses real purchase records).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Add a backend endpoint to fetch the authenticated caller's UserProfile that automatically creates and persists a default UserProfile on first access (first login), and returns it to the frontend as a Motoko Result (#ok/#err).",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Add a backend endpoint to save/update the authenticated caller's UserProfile via a Motoko Result (#ok/#err), enforcing that the stored profile id always matches the authenticated caller principal and cannot be written for any other principal.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Wire the frontend profile query hook (useGetCallerUserProfile) to call the new backend get-caller-profile endpoint instead of returning null placeholders, and ensure the UserDashboard no longer remains stuck in an indefinite loading/skeleton state for newly authenticated users.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Wire the frontend profile mutation hook (useSaveCallerUserProfile) to call the new backend save-caller-profile endpoint and invalidate/refetch the current profile query on success, so ProfileSetupModal can persist the name and other fields.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Align the frontend Result decoding with the backend Motoko Result variant shape (#ok/#err) for the newly wired profile endpoints, so fetch/save reliably handles both success and error cases.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Implement a backend endpoint `getCallerUserProfile` that returns the authenticated caller's `UserProfile` as a Motoko `Result` variant (`#ok`/`#err`) and automatically creates + persists a default `UserProfile` on first access (first login) so the frontend never receives a null/empty profile for a newly authenticated user.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-15",
+      "summary": "Implement a backend endpoint `saveCallerUserProfile(profile : UserProfile)` that updates/persists the authenticated caller's `UserProfile` and returns a Motoko `Result` variant (`#ok`/`#err`). Enforce that `profile.id` must match `caller` (cannot write a profile for another principal).",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Wire the frontend `useGetCallerUserProfile` React Query hook to call the backend `getCallerUserProfile` endpoint (instead of returning null placeholders) so `UserDashboard` exits the loading/skeleton state and displays real content for newly authenticated users.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Wire the frontend `useSaveCallerUserProfile` mutation to call the backend `saveCallerUserProfile` endpoint (instead of the placeholder toast), and invalidate/refetch `['currentUserProfile']` on success so the existing `ProfileSetupModal` persists the user's name and the dashboard reflects the updated profile.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-18",
+      "summary": "Align frontend Result decoding with the backend Motoko `Result` variant shape (`#ok`/`#err`) for the newly wired profile endpoints, replacing the current `unwrapResult` expectation of `{ __kind__: 'ok'|'err' }` so profile fetch/save reliably handles success and error responses.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-19",
+      "summary": "Add explicit loading/empty-state UX for Dashboard (skeleton/loading message) while user profile and analytics data are fetched, to avoid blank/empty dashboard pages on slow/failed backend responses.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-20",
+      "summary": "Fix Chrome \"Page not found\" issues by ensuring routing/navigation works on Chrome (including refresh/deep links) and aligns with deployment/base-path configuration.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-21",
+      "summary": "Fix mobile header responsiveness so the app title (e.g., \"DevLearn\") stays centered and does not overflow/crop characters (notably 'n' and 't') on small screens.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-22",
+      "summary": "UI polish: reduce the size/prominence of the blue \"development\" label/text so it is balanced with the rest of the interface.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-45",
+      "summary": "Create a social-media-ready Promptathon submission card (visual graphic) consistent with the app’s color palette, including title/tagline/slogan and event details.",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "architecturalNotes": [
+    "Frontend: React + TypeScript with TanStack React Query for data fetching/caching and mutation flows.",
+    "Frontend uses a custom hash-based router in App.tsx (window.location.hash) for Chrome compatibility without a full router library.",
+    "Authentication: Internet Identity (AuthClient) wrapped in a context provider; actor creation is identity-aware and re-created on identity changes.",
+    "ICP integration: a backend actor is created via createActorWithConfig; on creation the frontend calls _initializeAccessControlWithSecret() to register the caller role (admin/user) based on a secret token.",
+    "Backend: Motoko canister structured with mixins (authorization + blob storage) included into main actor.",
+    "Backend: Role-based access control managed by an AccessControl state map; admin assignment depends on a canister environment variable token.",
+    "Backend: Stripe integration implemented via ICP HTTP outcalls with a response transform to strip headers; checkout session creation includes client_reference_id for linking to a principal.",
+    "UI: TailwindCSS + shadcn-style component primitives; extensive use of Cards, Tables, Alerts, Dialogs, Tabs, and Skeleton loaders.",
+    "Engagement monitoring: frontend-only webcam capture/preview with simulated metric generation (no backend persistence in current code).",
+    "Data model: shared TypeScript types mirror Motoko types (courses, profiles, certificates, engagement metrics, external certification records).",
+    "Backend initialization should be idempotent and able to bootstrap the first admin without requiring prior admin authorization (i.e., if no admin exists, allow first authenticated user to be promoted to admin and then mark initialization complete).",
+    "Stripe config management needs reliable stable persistence in the canister and a clear Result (#ok/#err) contract surfaced to the frontend; failures may stem from admin bootstrap persistence/authorization ordering, so admin-only mutations (like setStripeConfiguration) must be robust immediately after first-admin initialization.",
+    "Priority focus confirmed: stabilize and complete Stripe enablement by making `setStripeConfiguration` reliably persist to stable storage and return explicit `Result` errors (and ensure admin bootstrap is persisted), before broader feature work.",
+    "Decision: prioritize resolving backend initialization/admin bootstrap/readiness issues first, because many frontend symptoms (blank pages, missing courses/prices, dashboard spinners) are downstream of backend not completing initialization or not returning required data.",
+    "Approach decision for Stripe: apply a more targeted fix focused specifically on Stripe configuration saving reliability (admin auth/bootstrapping + stable persistence + clear Result error surfaced to UI), rather than bundling broader changes.",
+    "Execution plan refinement: proceed with a very small, explicit first step to unblock Stripe Admin UI—inspect `setStripeConfiguration` and change it to return a clear Motoko `Result` (`#ok/#err`) with explicit failure reasons (e.g., not authorized/admin-required, invalid config, persistence failure) instead of trapping or surfacing a generic \"Failed to save configuration\".",
+    "Decision/workaround: implement a temporary payments bypass mode (treat courses as free / disable Stripe-config checks and paywall) to unblock app validation while Stripe configuration persistence is failing; re-enable Stripe later once `setStripeConfiguration` is stabilized.",
+    "Payments configuration is centralized in a frontend payments config module (e.g., frontend/src/config/payments.ts) to support a temporary Stripe/payments bypass mode that disables paywalls and Stripe-config gating across the app.",
+    "Stripe configuration saving now uses a Motoko Result (#ok/#err) contract end-to-end: backend returns explicit errors, the frontend unwraps and throws/display errors, and configuration is persisted across canister upgrades via preupgrade/postupgrade."
+  ],
+  "knownIssues": [
+    "Many core backend APIs referenced by frontend hooks are not implemented (e.g., getCourses, getCourse, getCallerUserProfile, saveCallerUserProfile, updateLessonProgress, addCourse, addLesson, updateCoursePrice, external certification and alumni registry queries). Frontend currently returns placeholders/empty arrays for these calls.",
+    "System readiness logic mismatch: backend getSystemHealth() checks firstUserPrincipal/adminInitializationComplete, but those variables are never updated by the included MixinAuthorization flow; systemReady may never become true in practice.",
+    "Result-type mismatch: frontend unwrapResult expects an {__kind__: 'ok'|'err'} shape while backend defines Result as variants #ok/#err; once backend methods are added, the decoding contract must be aligned.",
+    "Course purchase gating is incomplete: CoursePage hardcodes hasPurchased=false and does not consult backend purchasedCourses/purchase records; paid course locking is effectively always-on without a purchase path completion.",
+    "Certificate download button is present in UI but has no implementation (no PDF/image export flow).",
+    "External certification provider configuration and registrations are UI/placeholder only; no persistence or backend endpoints are wired.",
+    "EngagementMonitor generates random metrics and does not persist engagement data to user profiles; it also does not request microphone access despite showing audio-related metrics.",
+    "Stripe checkout body builder uses shipping_address_collection[allowed_countries][0] for every country in the loop, which may not correctly encode multiple allowed countries.",
+    "Frontend is wrapped with InternetIdentityProvider and QueryClientProvider both in main.tsx and again inside App.tsx, creating nested providers and potentially duplicate React Query clients.",
+    "There are two different index.css files (frontend/src/index.css and frontend/index.css) with conflicting CSS variable definitions; depending on bundler configuration this can cause theme inconsistencies.",
+    "Users can get stuck on initialization at \"Admin setup\" even after courses are seeded/loaded, indicating admin bootstrap/initialization completion is not reliably persisted or reported to frontend.",
+    "Dashboard can show an indefinite spinner/blank state when the backend returns no/undefined UserProfile for the authenticated user (missing first-login profile initialization).",
+    "Chrome can show \"Page not found\" in some cases, suggesting a routing / refresh / base-path handling issue specific to that browser or deployment configuration.",
+    "Mobile layout issue: header text (e.g., 'DevLearn') can overflow on small screens causing letters like 'n' and 't' to go off-screen/not render, indicating missing responsive centering/overflow handling.",
+    "Users can remain stuck on \"Initializing Platform\" / \"Admin setup\" even when courses appear loaded, indicating backend initialization does not reliably complete or persist readiness/admin state.",
+    "Initialization can fail with \"User is not registered\" (user bootstrap/registration is not being performed reliably before role checks / dashboard fetches).",
+    "Backend can error with \"Unauthorized: Only admins can assign user roles\" during initialization, suggesting initialization calls role-assignment paths that require an admin before any admin exists (bootstrap ordering bug).",
+    "Course pages can show \"Course Not Found\" even after course seeding, suggesting getCourse/course-fetch can race initialization or reference mismatched IDs vs seeded data.",
+    "Chrome can show \"Page not found\" for the app (routing/base-path/refresh handling issue persists in Chrome).",
+    "On mobile, header text (e.g., \"DevLearn\") can overflow/crop characters (notably 'n' and 't'), indicating responsive layout/overflow handling is still incorrect.",
+    "Dashboard can render as an empty page/spinner when backend returns no UserProfile data (default profile creation / fetching not consistently working).",
+    "Intermittent/ongoing initialization failures: platform can remain stuck on “Initializing Platform” / “Admin setup”, sometimes with errors like “User is not registered” or “Unauthorized: Only admins can assign user roles”, indicating bootstrap ordering/idempotency problems in backend initialization and role assignment.",
+    "Chrome-specific failure mode persists: app can show “Page not found” in Chrome (likely routing/base-path/refresh handling) even when it appears OK in the Caffeine app/webview.",
+    "Dashboard can render as an empty page/spinner when the backend returns no user profile data; request made to add a loading skeleton/message and ensure default profile creation on first login is reliably implemented.",
+    "Dashboard can appear as an empty page/spinner when navigating to Dashboard (suggesting missing/failed user profile or analytics fetch); user requested adding a loading skeleton/message while data loads.",
+    "After clicking “Start Course”, the user can land on an empty/blank page (course content not loading), indicating missing/incomplete backend course/lesson fetch endpoints and/or frontend expecting data that isn’t returned.",
+    "Course prices still do not appear in the UI even after attempts to add pricing + Stripe (pricing data not being returned/persisted consistently by backend course APIs).",
+    "Build/deploy attempts to apply the Stripe config save fix are repeatedly failing in the automation loop (multiple 'AI couldn't implement/build' failures), blocking progress on stabilizing `setStripeConfiguration`.",
+    "Payments/Stripe bypass mode is currently active, so the UI shows a message like \"payments are temporarily disabled\"; this may confuse admins/users while Stripe config saving remains broken."
+  ],
+  "isFixRequest": true,
+  "gameProjectType": "none",
+  "projectName": "DevLearn",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0,
+  "requiresBackendChanges": true,
+  "requiresFrontendChanges": true
+}

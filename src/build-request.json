@@ -1,0 +1,57 @@
+{
+  "kind": "build_request",
+  "title": "Fix incorrect 'Payments are temporarily disabled' state and enable Stripe payments when configured",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-61",
+      "text": "Remove the hardcoded global payments bypass that forces the UI to always show “Payments are temporarily disabled”, and instead drive the payments-enabled/disabled state from runtime conditions (Stripe configuration status) so payments are only disabled when Stripe is not configured (or when an explicit bypass flag is enabled).",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ],
+        "quotes": [
+          "It's saying that all the payment is temporary disabled"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The constant `PAYMENTS_DISABLED = true` in `frontend/src/config/payments.ts` no longer causes payments to be disabled in production by default.",
+        "When the backend reports Stripe is configured (via `isStripeConfigured()`), the checkout flow is enabled (e.g., the PaymentDialog shows the normal Stripe redirect messaging and the “Pay Now” button is available).",
+        "When the backend reports Stripe is not configured, the UI clearly indicates payments are disabled and prevents checkout initiation (same user-facing text remains in English).",
+        "The footer notice “Payments are temporarily disabled. All courses are currently accessible.” only appears when payments are actually disabled at runtime (not permanently)."
+      ]
+    },
+    {
+      "id": "REQ-62",
+      "text": "Update the payment gating logic in the frontend (PaymentDialog and checkout session creation) to use the runtime payments-disabled state (based on Stripe configuration status and any explicit bypass) rather than importing and checking `PAYMENTS_DISABLED` directly.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ],
+        "quotes": [
+          "It's saying that all the payment is temporary disabled"
+        ]
+      },
+      "acceptanceCriteria": [
+        "`frontend/src/components/PaymentDialog.tsx` no longer blocks payments solely due to a hardcoded constant and instead blocks only when runtime payments-disabled state is true.",
+        "`useCreateCheckoutSession` in `frontend/src/hooks/useQueries.ts` no longer throws “Payments are temporarily disabled” solely due to a hardcoded constant and instead throws only when runtime payments-disabled state is true.",
+        "All user-facing strings related to payment-disabled state remain in English."
+      ]
+    }
+  ],
+  "constraints": [
+    "Backend must remain a single Motoko actor (all logic in `backend/main.mo`).",
+    "Do not edit files under `frontend/src/components/ui` or any other immutable paths listed in SYSTEM_CONTEXT."
+  ],
+  "nonGoals": [
+    "Do not implement new payment providers or non-Stripe payment flows.",
+    "Do not introduce third-party auth or external databases.",
+    "Do not redesign the pricing model or course catalog beyond fixing the payment-disabled behavior."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}

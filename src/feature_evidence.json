@@ -1,0 +1,55 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-remove-the-hardcoded-global-payments-bypass-that-forces-the-ui-to-always-show-payments-are-temporarily-disabled-and-instead-drive-the-payments-enabled-disabled-state-from-runtime-conditions-stripe-configuration-status-so-payments-are-only-disabled-when-stripe-is-not-configured-or-when-an-explicit-bypass-flag-is-enabled",
+      "featureTitle": "Remove the hardcoded global payments bypass that forces the UI to always show “Payments are temporarily disabled”, and instead drive the payments-enabled/disabled state from runtime conditions (Stripe configuration status) so payments are only disabled when Stripe is not configured (or when an explicit bypass flag is enabled).",
+      "files": [
+        "frontend/src/components/Footer.tsx",
+        "frontend/src/components/PaymentDialog.tsx",
+        "frontend/src/config/payments.ts",
+        "frontend/src/hooks/usePaymentsStatus.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "camera@1.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "stripe@3.0.0",
+        "http-outcalls@3.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-61"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-the-payment-gating-logic-in-the-frontend-paymentdialog-and-checkout-session-creation-to-use-the-runtime-payments-disabled-state-based-on-stripe-configuration-status-and-any-explicit-bypass-rather-than-importing-and-checking-payments-disabled-directly",
+      "featureTitle": "Update the payment gating logic in the frontend (PaymentDialog and checkout session creation) to use the runtime payments-disabled state (based on Stripe configuration status and any explicit bypass) rather than importing and checking `PAYMENTS_DISABLED` directly.",
+      "files": [
+        "frontend/src/components/PaymentDialog.tsx",
+        "frontend/src/hooks/useQueries.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "blob-storage@4.0.0",
+        "camera@1.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "stripe@3.0.0",
+        "http-outcalls@3.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-62"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

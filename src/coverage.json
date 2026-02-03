@@ -1,0 +1,62 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-03T17:48:15.983Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 2,
+    "implemented": 2,
+    "items": [
+      {
+        "id": "REQ-61",
+        "summary": "Remove the hardcoded global payments bypass that forces the UI to always show “Payments are temporarily disabled”, and instead drive the payments-enabled/disabled state from runtime conditions (Stripe configuration status) so payments are only disabled when Stripe is not configured (or when an explicit bypass flag is enabled).",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/config/payments.ts",
+          "frontend/src/hooks/usePaymentsStatus.ts",
+          "frontend/src/components/Footer.tsx",
+          "frontend/src/components/PaymentDialog.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/config/payments.ts",
+          "frontend/src/hooks/usePaymentsStatus.ts",
+          "frontend/src/components/Footer.tsx",
+          "frontend/src/components/PaymentDialog.tsx"
+        ]
+      },
+      {
+        "id": "REQ-62",
+        "summary": "Update the payment gating logic in the frontend (PaymentDialog and checkout session creation) to use the runtime payments-disabled state (based on Stripe configuration status and any explicit bypass) rather than importing and checking `PAYMENTS_DISABLED` directly.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/components/PaymentDialog.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/components/PaymentDialog.tsx"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "build-request.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/src/components/Footer.tsx",
+    "frontend/src/components/PaymentDialog.tsx",
+    "frontend/src/config/payments.ts",
+    "frontend/src/hooks/usePaymentsStatus.ts",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/pages/AdminDashboard.tsx",
+    "frontend/src/pages/CoursePage.tsx",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

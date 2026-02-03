@@ -1,0 +1,56 @@
+{
+  "kind": "spec_vs_diff_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-03T17:48:15.925Z",
+  "summary": "The diff implements a runtime-driven payments-disabled state via a new `usePaymentsStatus` hook based on backend Stripe configuration (`useIsStripeConfigured`) and an explicit bypass flag (`PAYMENTS_BYPASS_ENABLED`). It updates `Footer` and `PaymentDialog` to rely on this runtime state and replaces the previous hardcoded payments disable configuration. However, the diff also includes multiple unrelated frontend changes (routing/views, responsive header, large UI/feature edits) that were not requested by REQ-61/REQ-62.",
+  "missing_requirements": [],
+  "hallucinated_features": [
+    {
+      "description": "Added hash-route views for `payment-success` and `payment-failure` and changes to initialization/query parameter parsing for Stripe return URLs.",
+      "reason": "Not requested by REQ-61/REQ-62, which only ask to fix payment-disabled gating based on Stripe configuration/bypass.",
+      "evidence": [
+        "frontend-file-summaries.txt (entry for \"frontend/src/App.tsx\")"
+      ]
+    },
+    {
+      "description": "Mobile-optimized responsive redesign of the navigation header (text sizing/centering/truncation/spacing changes).",
+      "reason": "Not requested; outside the payment-disabled gating requirements.",
+      "evidence": [
+        "frontend-file-summaries.txt (entry for \"frontend/src/components/Header.tsx\")"
+      ]
+    },
+    {
+      "description": "Global styling/theme changes (OKLCH color system, text rendering optimizations, mobile wrapping utilities).",
+      "reason": "Not requested; unrelated to payment gating logic.",
+      "evidence": [
+        "frontend-file-summaries.txt (entry for \"frontend/src/index.css\")"
+      ]
+    },
+    {
+      "description": "Significant changes/additions to analytics and engagement monitoring functionality (webcam integration, live engagement/audio/attention scores).",
+      "reason": "Not requested; unrelated to Stripe configuration-based payment enable/disable behavior.",
+      "evidence": [
+        "frontend-file-summaries.txt (entry for \"frontend/src/components/EngagementMonitor.tsx\")"
+      ]
+    },
+    {
+      "description": "Added/changed ErrorBoundary behavior and UI to prevent full application crashes.",
+      "reason": "Not requested by the BuildRequest; unrelated to payment gating requirements.",
+      "evidence": [
+        "frontend-file-summaries.txt (entry for \"frontend/src/components/ErrorBoundary.tsx\")"
+      ]
+    }
+  ],
+  "confidence": 0.67,
+  "changed_files": [
+    "frontend-file-summaries.txt",
+    "frontend/src/components/Footer.tsx",
+    "frontend/src/components/PaymentDialog.tsx",
+    "frontend/src/config/payments.ts",
+    "frontend/src/hooks/usePaymentsStatus.ts",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/pages/AdminDashboard.tsx",
+    "frontend/src/pages/CoursePage.tsx",
+    "project_state.json"
+  ]
+}

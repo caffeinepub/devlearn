@@ -1,0 +1,60 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Fix runtime Stripe-configured payment gating and remove hardcoded disabled state",
+  "requirements": [
+    {
+      "id": "REQ-61",
+      "summary": "Remove hardcoded global payments-disabled state and drive the UI from runtime Stripe configuration status (with an optional explicit bypass flag).",
+      "acceptanceCriteria": [
+        "The constant `PAYMENTS_DISABLED = true` in `frontend/src/config/payments.ts` no longer causes payments to be disabled in production by default.",
+        "When the backend reports Stripe is configured (via `isStripeConfigured()`), the checkout flow is enabled (e.g., the PaymentDialog shows the normal Stripe redirect messaging and the “Pay Now” button is available).",
+        "When the backend reports Stripe is not configured, the UI clearly indicates payments are disabled and prevents checkout initiation (same user-facing text remains in English).",
+        "The footer notice “Payments are temporarily disabled. All courses are currently accessible.” only appears when payments are actually disabled at runtime (not permanently)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/config/payments.ts",
+          "operation": "modify",
+          "description": "Remove the hardcoded `PAYMENTS_DISABLED = true` default and replace it with an explicit payments bypass flag that defaults to disabled=false and can be enabled via runtime configuration (e.g., environment-driven flag) so production does not disable payments by default."
+        },
+        {
+          "path": "frontend/src/hooks/usePaymentsStatus.ts",
+          "operation": "create",
+          "description": "Create a centralized payments status hook that derives a single runtime `paymentsDisabled` boolean from (1) backend `isStripeConfigured()` result and (2) the explicit bypass flag from `frontend/src/config/payments.ts`, returning enough state for UI gating (e.g., loading and disabled reason)."
+        },
+        {
+          "path": "frontend/src/components/Footer.tsx",
+          "operation": "modify",
+          "description": "Update the footer to use the runtime payments status (Stripe configured + optional bypass) instead of importing a hardcoded constant, so the notice “Payments are temporarily disabled. All courses are currently accessible.” only renders when payments are actually disabled at runtime."
+        },
+        {
+          "path": "frontend/src/components/PaymentDialog.tsx",
+          "operation": "modify",
+          "description": "Update PaymentDialog to use the runtime payments status (Stripe configured + optional bypass) for messaging and button availability, so it shows Stripe redirect messaging and enables “Pay Now” when configured, and shows the existing English disabled text while preventing checkout when not configured or bypassed."
+        }
+      ]
+    },
+    {
+      "id": "REQ-62",
+      "summary": "Refactor PaymentDialog and checkout session creation to gate payments using the shared runtime payments-disabled state rather than a hardcoded constant.",
+      "acceptanceCriteria": [
+        "`frontend/src/components/PaymentDialog.tsx` no longer blocks payments solely due to a hardcoded constant and instead blocks only when runtime payments-disabled state is true.",
+        "`useCreateCheckoutSession` in `frontend/src/hooks/useQueries.ts` no longer throws “Payments are temporarily disabled” solely due to a hardcoded constant and instead throws only when runtime payments-disabled state is true.",
+        "All user-facing strings related to payment-disabled state remain in English."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Refactor `useCreateCheckoutSession` to stop importing/checking a hardcoded `PAYMENTS_DISABLED` constant and instead rely on the shared runtime payments status (Stripe configured + optional bypass), throwing “Payments are temporarily disabled” only when the runtime disabled state is true."
+        },
+        {
+          "path": "frontend/src/components/PaymentDialog.tsx",
+          "operation": "modify",
+          "description": "Remove direct imports/usages of a hardcoded payments-disabled constant and gate the checkout initiation and UI state exclusively via the shared runtime payments status, preserving existing English user-facing strings for the disabled state."
+        }
+      ]
+    }
+  ]
+}
